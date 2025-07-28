@@ -56,7 +56,7 @@ window.translations.en = {
         yearly: "Per year",
         monthly: "Per month",
         taxBreakdown: "Tax breakdown (annual)",
-        socialTax: "Social security contribution (Trygdeavgift) 10.7%:",
+        socialTax: "Social security contribution (Trygdeavgift) 10.9%:",
         generalTax: "Tax on ordinary income (Skatt på alminnelig inntekt) 22%:",
         steppedTax: "Progressive tax (Trinnskatt):",
         totalTax: "Total tax:",

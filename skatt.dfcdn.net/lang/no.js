@@ -56,7 +56,7 @@ window.translations.no = {
         yearly: "Per år",
         monthly: "Per måned",
         taxBreakdown: "Skattespecifikasjon (årlig)",
-        socialTax: "Trygdeavgift 10.7%:",
+        socialTax: "Trygdeavgift 10.9%:",
         generalTax: "Skatt på alminnelig inntekt 22%:",
         steppedTax: "Trinnskatt:",
         totalTax: "Total skatt:",
