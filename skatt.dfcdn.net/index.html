@@ -1,25 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-i18n="page.title">ENK Tax Calculator - Norway</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="language-buttons.css">
 </head>
-
 <body>
     <div class="container">
         <div class="header">
             <div class="header-content">
                 <div class="language-selector">
-                    <div class="language-buttons">
-                        <button class="lang-btn active" data-lang="en">🇬🇧 EN</button>
-                        <button class="lang-btn" data-lang="no">🇳🇴 NO</button>
-                        <button class="lang-btn" data-lang="ua">🇺🇦 UA</button>
-                        <button class="lang-btn" data-lang="ru">🇷🇺 RU</button>
-                    </div>
+                    <select id="languageSelect">
+                        <option value="en">🇬🇧 English</option>
+                        <option value="no">🇳🇴 Norwegian</option>
+                        <option value="ua">🇺🇦 Ukrainian</option>
+                        <option value="ru">Russian</option>
+                    </select>
                 </div>
                 <h1 data-i18n="header.title">🇳🇴 ENK Tax Calculator</h1>
                 <p data-i18n="header.subtitle">Tax calculation for sole proprietorship (ENK) in Norway</p>
@@ -33,19 +30,15 @@
                     <div class="radio-option">
                         <input type="radio" id="calcFromProfit" name="calculationType" value="fromProfit" checked>
                         <label for="calcFromProfit" class="radio-label">
-                            <strong data-i18n="form.fromProfit.title">Amount from which tax needs to be
-                                calculated</strong>
-                            <span class="radio-description" data-i18n="form.fromProfit.description">Profit before taxes
-                                (gross) → calculate net amount (netto)</span>
+                            <strong data-i18n="form.fromProfit.title">Amount from which tax needs to be calculated</strong>
+                            <span class="radio-description" data-i18n="form.fromProfit.description">Profit before taxes (gross) → calculate net amount (netto)</span>
                         </label>
                     </div>
                     <div class="radio-option">
                         <input type="radio" id="calcToProfit" name="calculationType" value="toProfit">
                         <label for="calcToProfit" class="radio-label">
-                            <strong data-i18n="form.toProfit.title">Amount that should remain after paying all
-                                taxes</strong>
-                            <span class="radio-description" data-i18n="form.toProfit.description">Desired net amount
-                                (netto) → calculate required profit (gross)</span>
+                            <strong data-i18n="form.toProfit.title">Amount that should remain after paying all taxes</strong>
+                            <span class="radio-description" data-i18n="form.toProfit.description">Desired net amount (netto) → calculate required profit (gross)</span>
                         </label>
                     </div>
                 </div>
@@ -103,21 +96,15 @@
                 <div class="tax-breakdown">
                     <h4 data-i18n="results.taxBreakdown">Tax breakdown (annual)</h4>
                     <div class="tax-item">
-                        <span class="tax-label" data-i18n="results.socialTax">Social contributions (<a
-                                href="https://www.skatteetaten.no/en/rates/national-insurance-contributions/"
-                                target="_blank" rel="noopener">Trygdeavgift</a>) 10.9%:</span>
+                        <span class="tax-label" data-i18n="results.socialTax">Social contributions (<a href="https://www.skatteetaten.no/en/rates/national-insurance-contributions/" target="_blank" rel="noopener">Trygdeavgift</a>) 10.9%:</span>
                         <span class="tax-value" id="socialTax">0 NOK</span>
                     </div>
                     <div class="tax-item">
-                        <span class="tax-label" data-i18n="results.generalTax">Tax on general income (<a
-                                href="https://www.skatteetaten.no/en/rettskilder/type/skattedirektoratets-meldinger/forskuddsmeldingen-2025/"
-                                target="_blank" rel="noopener">Skatt på alminnelig inntekt</a>) 22%:</span>
+                        <span class="tax-label" data-i18n="results.generalTax">Tax on general income (<a href="https://www.skatteetaten.no/en/rettskilder/type/skattedirektoratets-meldinger/forskuddsmeldingen-2025/" target="_blank" rel="noopener">Skatt på alminnelig inntekt</a>) 22%:</span>
                         <span class="tax-value" id="generalTax">0 NOK</span>
                     </div>
                     <div class="tax-item">
-                        <span class="tax-label" data-i18n="results.steppedTax">Bracket tax (<a
-                                href="https://www.skatteetaten.no/en/rates/bracket-tax/" target="_blank"
-                                rel="noopener">Trinnskatt</a>):</span>
+                        <span class="tax-label" data-i18n="results.steppedTax">Bracket tax (<a href="https://www.skatteetaten.no/en/rates/bracket-tax/" target="_blank" rel="noopener">Trinnskatt</a>):</span>
                         <span class="tax-value" id="steppedTax">0 NOK</span>
                     </div>
                     <div class="stepped-tax-details" id="steppedDetails">
@@ -158,9 +145,8 @@
     <script src="lang/ua.js"></script>
     <script src="lang/no.js"></script>
     <script src="lang/en.js"></script>
-
+    
     <!-- Main application logic -->
     <script src="script.js"></script>
 </body>
-
 </html>
