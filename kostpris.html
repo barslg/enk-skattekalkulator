@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профессиональный калькулятор себестоимости услуг - Норвегия</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #0048a3 0%, #002d62 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .calculator-wrapper {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e0e0e0;
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #666;
+            white-space: nowrap;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .tab:hover {
+            background: rgba(0,72,163,0.05);
+        }
+
+        .tab.active {
+            color: #0048a3;
+            background: white;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #0048a3;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+            animation: fadeIn 0.3s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .input-group:hover {
+            border-color: #0048a3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,72,163,0.1);
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            background: white;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #0048a3;
+        }
+
+        .input-group .hint {
+            font-size: 0.75rem;
+            color: #6c757d;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .required {
+            color: #dc3545;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 18px;
+            margin-top: 20px;
+            background: linear-gradient(135deg, #0048a3 0%, #002d62 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0,72,163,0.4);
+        }
+
+        .results-section {
+            background: #f8f9fa;
+            padding: 30px;
+            display: none;
+        }
+
+        .results-section.active {
+            display: block;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            border-left: 4px solid #0048a3;
+        }
+
+        .summary-card.primary {
+            background: linear-gradient(135deg, #0048a3 0%, #002d62 100%);
+            color: white;
+            border: none;
+            transform: scale(1.05);
+        }
+
+        .summary-card h3 {
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+
+        .summary-card .value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .summary-card .unit {
+            font-size: 0.85rem;
+            opacity: 0.7;
+        }
+
+        .breakdown-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .breakdown-title {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .category-breakdown {
+            margin-bottom: 30px;
+        }
+
+        .category-title {
+            font-size: 1.1rem;
+            color: #0048a3;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .category-total {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .breakdown-item {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e0e0e0;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+        }
+
+        .breakdown-item:hover {
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transform: translateX(5px);
+        }
+
+        .breakdown-item .label {
+            font-weight: 500;
+            color: #495057;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .breakdown-item .values {
+            text-align: right;
+        }
+
+        .breakdown-item .amount {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .breakdown-item .percentage {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        .breakdown-item .detail {
+            font-size: 0.75rem;
+            color: #999;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0048a3 0%, #002d62 100%);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .warning-box .title {
+            font-weight: bold;
+            color: #856404;
+            margin-bottom: 5px;
+        }
+
+        .warning-box .text {
+            color: #856404;
+            font-size: 0.9rem;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border-left: 4px solid #0c5460;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .info-box .title {
+            font-weight: bold;
+            color: #0c5460;
+            margin-bottom: 5px;
+        }
+
+        .info-box .text {
+            color: #0c5460;
+            font-size: 0.9rem;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .metric-item {
+            text-align: center;
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #0048a3;
+        }
+
+        .total-row {
+            background: linear-gradient(135deg, #0048a3 0%, #002d62 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .tabs {
+                flex-wrap: wrap;
+            }
+            
+            .tab {
+                flex: 1 1 auto;
+                text-align: center;
+                font-size: 0.9rem;
+                padding: 12px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🇳🇴 Калькулятор себестоимости услуг</h1>
+            <div class="subtitle">Профессиональный расчёт для бизнеса в Норвегии</div>
+        </div>
+        
+        <div class="calculator-wrapper">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('basic')">📊 Основные</button>
+                <button class="tab" onclick="switchTab('salary')">💰 Зарплата и налоги</button>
+                <button class="tab" onclick="switchTab('insurance')">🛡️ Страхование</button>
+                <button class="tab" onclick="switchTab('equipment')">💻 Оборудование</button>
+                <button class="tab" onclick="switchTab('services')">📋 Услуги</button>
+                <button class="tab" onclick="switchTab('operations')">🚗 Операционные</button>
+            </div>
+
+            <!-- Основные параметры -->
+            <div id="basic" class="tab-content active">
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>Рабочих дней в месяце <span class="required">*</span></label>
+                        <input type="number" id="workDaysMonth" value="22" min="1" max="31">
+                        <div class="hint">Среднее количество рабочих дней</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Рабочих часов в день <span class="required">*</span></label>
+                        <input type="number" id="workHoursDay" value="7.5" min="1" max="24" step="0.5">
+                        <div class="hint">Стандартный рабочий день в Норвегии</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Загруженность (%) <span class="required">*</span></label>
+                        <input type="number" id="utilization" value="70" min="1" max="100">
+                        <div class="hint">Процент оплачиваемого времени</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Недель отпуска в год <span class="required">*</span></label>
+                        <input type="number" id="vacationWeeks" value="5" min="0" max="52">
+                        <div class="hint">Минимум 5 недель в Норвегии</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Больничных дней в год</label>
+                        <input type="number" id="sickDays" value="10" min="0" max="365">
+                        <div class="hint">Среднее по статистике</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Гос. праздников в году</label>
+                        <input type="number" id="holidays" value="12" min="0" max="365">
+                        <div class="hint">Красные дни календаря</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Аренда офиса в месяц (NOK)</label>
+                        <input type="number" id="rentMonth" value="15000" min="0">
+                        <div class="hint">Офис, коворкинг или часть дома</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Админ расходы в месяц (NOK)</label>
+                        <input type="number" id="adminMonth" value="3000" min="0">
+                        <div class="hint">Телефон, интернет, подписки</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Маркетинг в год (NOK)</label>
+                        <input type="number" id="marketingYear" value="30000" min="0">
+                        <div class="hint">Реклама, сайт, продвижение</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Курсы и обучение в год (NOK)</label>
+                        <input type="number" id="coursesYear" value="25000" min="0">
+                        <div class="hint">Развитие компетенций</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Внеплановые расходы (%)</label>
+                        <input type="number" id="contingency" value="10" min="0" max="100">
+                        <div class="hint">Буфер безопасности</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Годовая инфляция (%) <span class="required">*</span></label>
+                        <input type="number" id="inflation" value="5" min="0" max="100" step="0.5">
+                        <div class="hint">Текущая инфляция в Норвегии ~4-6%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Зарплата и налоги -->
+            <div id="salary" class="tab-content">
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>Желаемая зарплата брутто в год (NOK) <span class="required">*</span></label>
+                        <input type="number" id="salaryYear" value="600000" min="0">
+                        <div class="hint">Ваша годовая зарплата до налогов</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Arbeidsgiveravgift (%)</label>
+                        <input type="number" id="employerTax" value="14.1" min="0" max="100" step="0.1">
+                        <div class="hint">Налог работодателя (стандарт 14.1%)</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Feriepenger (%)</label>
+                        <input type="number" id="vacationMoney" value="12" min="0" max="100" step="0.1">
+                        <div class="hint">Отпускные (стандарт 12%)</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>OTP - пенсия (%)</label>
+                        <input type="number" id="pension" value="5" min="2" max="7" step="0.1">
+                        <div class="hint">Обязательная пенсия (мин 2%)</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Рождественский бонус (NOK)</label>
+                        <input type="number" id="christmasBonus" value="10000" min="0">
+                        <div class="hint">Традиционный бонус в Норвегии</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Страхование -->
+            <div id="insurance" class="tab-content">
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>Yrkesskadeforsikring в год (NOK)</label>
+                        <input type="number" id="workInjuryInsurance" value="8000" min="0">
+                        <div class="hint">Обязательное страхование от травм</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Ansvarsforsikring в год (NOK)</label>
+                        <input type="number" id="liabilityInsurance" value="15000" min="0">
+                        <div class="hint">Профессиональная ответственность</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Driftsforsikring в год (NOK)</label>
+                        <input type="number" id="businessInsurance" value="12000" min="0">
+                        <div class="hint">Страхование бизнеса</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Helseforsikring в год (NOK)</label>
+                        <input type="number" id="healthInsurance" value="18000" min="0">
+                        <div class="hint">Частное медицинское страхование</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Оборудование и ПО -->
+            <div id="equipment" class="tab-content">
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>Амортизация техники в год (NOK)</label>
+                        <input type="number" id="equipmentDepreciation" value="20000" min="0">
+                        <div class="hint">Ноутбук, телефон, мониторы (3-5 лет)</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Лицензии ПО в год (NOK)</label>
+                        <input type="number" id="softwareLicenses" value="15000" min="0">
+                        <div class="hint">Office, Adobe, спец. программы</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Облачные сервисы в год (NOK)</label>
+                        <input type="number" id="cloudServices" value="6000" min="0">
+                        <div class="hint">Dropbox, Google, Azure и т.д.</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Домен и хостинг в год (NOK)</label>
+                        <input type="number" id="hosting" value="3000" min="0">
+                        <div class="hint">Сайт, почта, сервера</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Профессиональные услуги -->
+            <div id="services" class="tab-content">
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>Regnskapsfører в год (NOK)</label>
+                        <input type="number" id="accountant" value="24000" min="0">
+                        <div class="hint">Бухгалтер (обязательно в Норвегии)</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Revisor в год (NOK)</label>
+                        <input type="number" id="auditor" value="15000" min="0">
+                        <div class="hint">Аудитор для AS</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Юридические услуги в год (NOK)</label>
+                        <input type="number" id="legal" value="10000" min="0">
+                        <div class="hint">Консультации, договоры</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Банковские комиссии в год (NOK)</label>
+                        <input type="number" id="bankFees" value="5000" min="0">
+                        <div class="hint">Обслуживание счетов, переводы</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Операционные расходы -->
+            <div id="operations" class="tab-content">
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>Транспорт в месяц (NOK)</label>
+                        <input type="number" id="transportMonth" value="3000" min="0">
+                        <div class="hint">Бензин, проезд, парковка</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Представительские в месяц (NOK)</label>
+                        <input type="number" id="representationMonth" value="2000" min="0">
+                        <div class="hint">Обеды с клиентами, кофе</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Членские взносы в год (NOK)</label>
+                        <input type="number" id="membershipYear" value="12000" min="0">
+                        <div class="hint">NHO, профсоюзы, ассоциации</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Резерв на bad debt (%)</label>
+                        <input type="number" id="badDebt" value="2" min="0" max="100" step="0.5">
+                        <div class="hint">Неоплаченные счета</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Сертификации в год (NOK)</label>
+                        <input type="number" id="certifications" value="15000" min="0">
+                        <div class="hint">Профессиональные сертификаты</div>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Networking events в год (NOK)</label>
+                        <input type="number" id="networking" value="10000" min="0">
+                        <div class="hint">Конференции, встречи</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="calculate-btn" onclick="calculate()">
+                🧮 Рассчитать полную себестоимость
+            </button>
+            
+            <!-- Результаты -->
+            <div class="results-section" id="results">
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <h3>💼 Себестоимость часа</h3>
+                        <div class="value" id="hourCost">0</div>
+                        <div class="unit">NOK/час</div>
+                        <div class="unit" style="color: #dc3545; font-size: 0.75rem; margin-top: 5px;" id="inflationNote"></div>
+                    </div>
+                    
+                    <div class="summary-card primary">
+                        <h3>⭐ Рекомендуемая ставка</h3>
+                        <div class="value" id="recommendedRate">0</div>
+                        <div class="unit">NOK/час (с маржой 30%)</div>
+                    </div>
+                    
+                    <div class="summary-card">
+                        <h3>📅 Себестоимость месяца</h3>
+                        <div class="value" id="monthCost">0</div>
+                        <div class="unit">NOK/месяц</div>
+                    </div>
+                    
+                    <div class="summary-card">
+                        <h3>📊 Общие расходы в год</h3>
+                        <div class="value" id="yearCost">0</div>
+                        <div class="unit">NOK/год</div>
+                    </div>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-item">
+                        <div class="metric-label">Рабочих дней в году</div>
+                        <div class="metric-value" id="workDaysYear">0</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Рабочих часов в году</div>
+                        <div class="metric-value" id="workHoursYear">0</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Эффективных часов</div>
+                        <div class="metric-value" id="effectiveHours">0</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Минимальный доход</div>
+                        <div class="metric-value" id="minIncome">0</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Ставка через год (+инфляция)</div>
+                        <div class="metric-value" id="nextYearRate" style="color: #dc3545;">0</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Прирост из-за инфляции</div>
+                        <div class="metric-value" id="inflationGrowth" style="color: #dc3545;">0</div>
+                    </div>
+                </div>
+                
+                <div class="breakdown-section">
+                    <h2 class="breakdown-title">📈 Детальная структура расходов</h2>
+                    <div id="breakdownContainer"></div>
+                    <div class="total-row">
+                        <span>ИТОГО РАСХОДОВ</span>
+                        <span id="totalExpenses">0 NOK</span>
+                    </div>
+                </div>
+
+                <div class="warning-box">
+                    <div class="title">⚠️ Важно помнить про MVA!</div>
+                    <div class="text">
+                        При выставлении счетов клиентам добавляйте 25% MVA сверху. 
+                        Ваша ставка должна быть без учёта MVA, налог добавляется отдельной строкой.
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <div class="title">💡 Рекомендация по ценообразованию</div>
+                    <div class="text">
+                        Минимальная маржа должна быть 30% для устойчивого бизнеса. 
+                        Рекомендуемая маржа 40-50% для роста и развития. 
+                        Премиум услуги могут иметь маржу 70-100%.
+                    </div>
+                </div>
+                
+                <div class="warning-box" style="background: #f8d7da; border-color: #dc3545;">
+                    <div class="title" style="color: #721c24;">📈 Инфляция учтена в расчёте!</div>
+                    <div class="text" style="color: #721c24;">
+                        В расчёт добавлена корректировка на инфляцию. <strong>ВАЖНО:</strong> Ежегодно индексируйте свои ставки минимум на уровень инфляции! 
+                        При долгосрочных контрактах обязательно включайте пункт об ежегодной индексации цен.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function formatNumber(num) {
+            return Math.round(num).toLocaleString('no-NO');
+        }
+
+        function switchTab(tabName) {
+            // Скрываем все табы
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Показываем выбранный таб
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+
+        function calculate() {
+            // Основные параметры
+            const workDaysMonth = parseFloat(document.getElementById('workDaysMonth').value) || 22;
+            const workHoursDay = parseFloat(document.getElementById('workHoursDay').value) || 7.5;
+            const utilization = parseFloat(document.getElementById('utilization').value) || 70;
+            const vacationWeeks = parseFloat(document.getElementById('vacationWeeks').value) || 5;
+            const sickDays = parseFloat(document.getElementById('sickDays').value) || 10;
+            const holidays = parseFloat(document.getElementById('holidays').value) || 12;
+            const rentMonth = parseFloat(document.getElementById('rentMonth').value) || 0;
+            const adminMonth = parseFloat(document.getElementById('adminMonth').value) || 0;
+            const marketingYear = parseFloat(document.getElementById('marketingYear').value) || 0;
+            const coursesYear = parseFloat(document.getElementById('coursesYear').value) || 0;
+            const contingency = parseFloat(document.getElementById('contingency').value) || 10;
+            const inflation = parseFloat(document.getElementById('inflation').value) || 5;
+
+            // Зарплата и налоги
+            const salaryYear = parseFloat(document.getElementById('salaryYear').value) || 600000;
+            const employerTax = parseFloat(document.getElementById('employerTax').value) || 14.1;
+            const vacationMoney = parseFloat(document.getElementById('vacationMoney').value) || 12;
+            const pension = parseFloat(document.getElementById('pension').value) || 5;
+            const christmasBonus = parseFloat(document.getElementById('christmasBonus').value) || 0;
+
+            // Страхование
+            const workInjuryInsurance = parseFloat(document.getElementById('workInjuryInsurance').value) || 0;
+            const liabilityInsurance = parseFloat(document.getElementById('liabilityInsurance').value) || 0;
+            const businessInsurance = parseFloat(document.getElementById('businessInsurance').value) || 0;
+            const healthInsurance = parseFloat(document.getElementById('healthInsurance').value) || 0;
+
+            // Оборудование и ПО
+            const equipmentDepreciation = parseFloat(document.getElementById('equipmentDepreciation').value) || 0;
+            const softwareLicenses = parseFloat(document.getElementById('softwareLicenses').value) || 0;
+            const cloudServices = parseFloat(document.getElementById('cloudServices').value) || 0;
+            const hosting = parseFloat(document.getElementById('hosting').value) || 0;
+
+            // Профессиональные услуги
+            const accountant = parseFloat(document.getElementById('accountant').value) || 0;
+            const auditor = parseFloat(document.getElementById('auditor').value) || 0;
+            const legal = parseFloat(document.getElementById('legal').value) || 0;
+            const bankFees = parseFloat(document.getElementById('bankFees').value) || 0;
+
+            // Операционные расходы
+            const transportMonth = parseFloat(document.getElementById('transportMonth').value) || 0;
+            const representationMonth = parseFloat(document.getElementById('representationMonth').value) || 0;
+            const membershipYear = parseFloat(document.getElementById('membershipYear').value) || 0;
+            const badDebt = parseFloat(document.getElementById('badDebt').value) || 2;
+            const certifications = parseFloat(document.getElementById('certifications').value) || 0;
+            const networking = parseFloat(document.getElementById('networking').value) || 0;
+
+            // Расчет рабочих дней и часов
+            const totalWorkDaysYear = workDaysMonth * 12;
+            const vacationDays = vacationWeeks * 5;
+            const actualWorkDaysYear = totalWorkDaysYear - vacationDays - sickDays - holidays;
+            const actualWorkHoursYear = actualWorkDaysYear * workHoursDay;
+            const effectiveHoursYear = actualWorkHoursYear * (utilization / 100);
+
+            // Расчет расходов по категориям
+            const categories = [];
+
+            // 1. Зарплата и налоги
+            const arbeidsgiveravgift = salaryYear * (employerTax / 100);
+            const feriepenger = salaryYear * (vacationMoney / 100);
+            const pensionCost = salaryYear * (pension / 100);
+            const totalSalaryExpenses = salaryYear + arbeidsgiveravgift + feriepenger + pensionCost + christmasBonus;
+            
+            categories.push({
+                name: '💰 Зарплата и налоги',
+                items: [
+                    { name: 'Зарплата брутто', amount: salaryYear },
+                    { name: 'Arbeidsgiveravgift', amount: arbeidsgiveravgift },
+                    { name: 'Feriepenger', amount: feriepenger },
+                    { name: 'OTP пенсия', amount: pensionCost },
+                    { name: 'Рождественский бонус', amount: christmasBonus }
+                ],
+                total: totalSalaryExpenses
+            });
+
+            // 2. Офис и администрация
+            const rentYear = rentMonth * 12;
+            const adminYear = adminMonth * 12;
+            const officeTotal = rentYear + adminYear;
+            
+            categories.push({
+                name: '🏢 Офис и администрация',
+                items: [
+                    { name: 'Аренда офиса', amount: rentYear },
+                    { name: 'Админ расходы', amount: adminYear }
+                ],
+                total: officeTotal
+            });
+
+            // 3. Страхование
+            const insuranceTotal = workInjuryInsurance + liabilityInsurance + businessInsurance + healthInsurance;
+            
+            categories.push({
+                name: '🛡️ Страхование',
+                items: [
+                    { name: 'Yrkesskadeforsikring', amount: workInjuryInsurance },
+                    { name: 'Ansvarsforsikring', amount: liabilityInsurance },
+                    { name: 'Driftsforsikring', amount: businessInsurance },
+                    { name: 'Helseforsikring', amount: healthInsurance }
+                ],
+                total: insuranceTotal
+            });
+
+            // 4. Техника и ПО
+            const techTotal = equipmentDepreciation + softwareLicenses + cloudServices + hosting;
+            
+            categories.push({
+                name: '💻 Техника и ПО',
+                items: [
+                    { name: 'Амортизация техники', amount: equipmentDepreciation },
+                    { name: 'Лицензии ПО', amount: softwareLicenses },
+                    { name: 'Облачные сервисы', amount: cloudServices },
+                    { name: 'Домен и хостинг', amount: hosting }
+                ],
+                total: techTotal
+            });
+
+            // 5. Профессиональные услуги
+            const servicesTotal = accountant + auditor + legal + bankFees;
+            
+            categories.push({
+                name: '📋 Профессиональные услуги',
+                items: [
+                    { name: 'Regnskapsfører', amount: accountant },
+                    { name: 'Revisor', amount: auditor },
+                    { name: 'Юридические услуги', amount: legal },
+                    { name: 'Банковские комиссии', amount: bankFees }
+                ],
+                total: servicesTotal
+            });
+
+            // 6. Операционные расходы
+            const transportYear = transportMonth * 12;
+            const representationYear = representationMonth * 12;
+            const operationsTotal = transportYear + representationYear + membershipYear + certifications + networking;
+            
+            categories.push({
+                name: '🚗 Операционные расходы',
+                items: [
+                    { name: 'Транспорт', amount: transportYear },
+                    { name: 'Представительские', amount: representationYear },
+                    { name: 'Членские взносы', amount: membershipYear },
+                    { name: 'Сертификации', amount: certifications },
+                    { name: 'Networking events', amount: networking }
+                ],
+                total: operationsTotal
+            });
+
+            // 7. Маркетинг и развитие
+            const developmentTotal = marketingYear + coursesYear;
+            
+            categories.push({
+                name: '📈 Маркетинг и развитие',
+                items: [
+                    { name: 'Маркетинг', amount: marketingYear },
+                    { name: 'Курсы и обучение', amount: coursesYear }
+                ],
+                total: developmentTotal
+            });
+
+            // Подсчет базовых расходов
+            const baseExpenses = categories.reduce((sum, cat) => sum + cat.total, 0);
+            
+            // Добавляем внеплановые расходы
+            const contingencyAmount = baseExpenses * (contingency / 100);
+            
+            // Добавляем резерв на bad debt
+            const badDebtAmount = baseExpenses * (badDebt / 100);
+            
+            // Добавляем корректировку на инфляцию
+            const inflationAmount = baseExpenses * (inflation / 100);
+            
+            categories.push({
+                name: '⚠️ Резервы и риски',
+                items: [
+                    { name: 'Внеплановые расходы', amount: contingencyAmount },
+                    { name: 'Резерв на bad debt', amount: badDebtAmount },
+                    { name: 'Корректировка на инфляцию', amount: inflationAmount }
+                ],
+                total: contingencyAmount + badDebtAmount + inflationAmount
+            });
+
+            // Итоговые расходы
+            const totalExpensesYear = baseExpenses + contingencyAmount + badDebtAmount + inflationAmount;
+
+            // Себестоимость
+            const costPerHour = effectiveHoursYear > 0 ? totalExpensesYear / effectiveHoursYear : 0;
+            const costPerMonth = totalExpensesYear / 12;
+            const recommendedHourRate = costPerHour * 1.3; // +30% маржа
+            const minIncomeYear = totalExpensesYear * 1.3;
+
+            // Обновляем UI
+            document.getElementById('hourCost').textContent = formatNumber(costPerHour);
+            document.getElementById('recommendedRate').textContent = formatNumber(recommendedHourRate);
+            document.getElementById('monthCost').textContent = formatNumber(costPerMonth);
+            document.getElementById('yearCost').textContent = formatNumber(totalExpensesYear);
+            
+            // Показываем влияние инфляции
+            if (inflation > 0) {
+                const inflationImpact = ((inflationAmount / effectiveHoursYear) || 0);
+                document.getElementById('inflationNote').textContent = `+${formatNumber(inflationImpact)} NOK/час от инфляции`;
+            } else {
+                document.getElementById('inflationNote').textContent = '';
+            }
+
+            document.getElementById('workDaysYear').textContent = Math.round(actualWorkDaysYear);
+            document.getElementById('workHoursYear').textContent = Math.round(actualWorkHoursYear);
+            document.getElementById('effectiveHours').textContent = Math.round(effectiveHoursYear);
+            document.getElementById('minIncome').textContent = formatNumber(minIncomeYear) + ' NOK';
+            
+            // Показываем влияние инфляции на будущие ставки
+            const nextYearRate = recommendedHourRate * (1 + inflation/100);
+            const inflationGrowthAmount = recommendedHourRate * (inflation/100);
+            document.getElementById('nextYearRate').textContent = formatNumber(nextYearRate) + ' NOK/час';
+            document.getElementById('inflationGrowth').textContent = '+' + formatNumber(inflationGrowthAmount) + ' NOK/час';
+
+            document.getElementById('totalExpenses').textContent = formatNumber(totalExpensesYear) + ' NOK';
+
+            // Создаем детальный breakdown
+            const breakdownContainer = document.getElementById('breakdownContainer');
+            breakdownContainer.innerHTML = '';
+
+            categories.forEach(category => {
+                if (category.total === 0) return;
+
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'category-breakdown';
+
+                const categoryPercentage = (category.total / totalExpensesYear * 100).toFixed(1);
+                
+                categoryDiv.innerHTML = `
+                    <div class="category-title">
+                        <span>${category.name}</span>
+                        <span class="category-total">${formatNumber(category.total)} NOK (${categoryPercentage}%)</span>
+                    </div>
+                `;
+
+                category.items.forEach(item => {
+                    if (item.amount === 0) return;
+
+                    const itemPercentage = (item.amount / totalExpensesYear * 100).toFixed(1);
+                    const itemHourCost = effectiveHoursYear > 0 ? item.amount / effectiveHoursYear : 0;
+                    const itemMonthCost = item.amount / 12;
+
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'breakdown-item';
+                    itemDiv.innerHTML = `
+                        <div class="label">
+                            <span>${item.name}</span>
+                        </div>
+                        <div class="values">
+                            <div class="amount">${formatNumber(item.amount)} NOK</div>
+                            <div class="percentage">${itemPercentage}% от общих</div>
+                            <div class="detail">${formatNumber(itemHourCost)} NOK/час | ${formatNumber(itemMonthCost)} NOK/мес</div>
+                        </div>
+                    `;
+                    categoryDiv.appendChild(itemDiv);
+
+                    // Добавляем прогресс-бар
+                    const progressBar = document.createElement('div');
+                    progressBar.className = 'progress-bar';
+                    progressBar.innerHTML = `<div class="progress-fill" style="width: ${itemPercentage}%"></div>`;
+                    itemDiv.appendChild(progressBar);
+                });
+
+                breakdownContainer.appendChild(categoryDiv);
+            });
+
+            // Показываем результаты
+            document.getElementById('results').classList.add('active');
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Автоматический пересчет при изменении
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', () => {
+                const results = document.getElementById('results');
+                if (results.classList.contains('active')) {
+                    calculate();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
